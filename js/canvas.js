@@ -231,7 +231,7 @@ Canvas.prototype.height = function() {
  * Resizes canvas
  * @param  {number} w New width
  * @param  {number} h New height
- * @param  {boolean} redraw Redraw canvas afterwards?
+ * @param  {boolean=} redraw Redraw canvas afterwards?
  */
 Canvas.prototype.resize = function(w, h, redraw) {
     if (redraw === undefined) {
@@ -779,13 +779,21 @@ Canvas.prototype.fillCircleInPts = function(x1, y1, x2, y2, color) {
 /**
  * Draws an image
  * @param  {Image} image    image to draw
- * @param  {number} x       x position
- * @param  {number} y       y position
- * @param  {number} w       width - if undefined, will use the image's width
+ * @param  {number=} x       x position - if undefined, will be 0
+ * @param  {number=} y       y position - if undefined, will be 0
+ * @param  {number=} w       width - if undefined, will use the image's width
  * @param  {number=} h      height - if undefined, will use the image's height
  * @return {undefined}      no return value
  */
 Canvas.prototype.drawImage = function(image, x, y, w, h) {
+    if (x === undefined) {
+        x = 0;
+    }
+
+    if (y === undefined) {
+        y = 0;
+    }
+
     if (w === undefined) {
         w = image.width;
     }
@@ -801,22 +809,28 @@ Canvas.prototype.drawImage = function(image, x, y, w, h) {
  * Draws a rotated image
  * @param  {Image} image    image to draw
  * @param  {number} rotate  radians to rotate image
- * @param  {number} x       x position
- * @param  {number} y       y position
+ * @param  {number=} x       x position
+ * @param  {number=} y       y position
  * @param  {number=} w      width - if undefined, will use image's width
  * @param  {number=} h      height - if undefined, will use image's height
  * @return {undefined}      no return value
  */
 Canvas.prototype.drawRotatedImage = function(image, rotate, x, y, w, h) {
+    if (x === undefined) x = 0;
+    if (y === undefined) y = 0;
     if (w === undefined) w = image.width;
     if (h === undefined) h = image.height;
 
     var ctx = this.context();
 
     ctx.save();
-    ctx.translate(x + w / 2, y + h / 2);
+    if (rotate === Math.PI / 2 || rotate === 3 * Math.PI / 2) {
+        ctx.translate(h / 2, w / 2);
+    } else {
+        ctx.translate(w / 2, h / 2);
+    }
     ctx.rotate(rotate);
-    ctx.drawImage(image, -w / 2, -h / 2, w, h);
+    ctx.drawImage(image, -w / 2, -h / 2);
     ctx.restore();
 };
 

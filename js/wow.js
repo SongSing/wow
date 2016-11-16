@@ -1,4 +1,6 @@
 var canvas;
+var resetImg;
+var angle = 0;
 
 function el(id) {
     return document.getElementById(id);
@@ -7,6 +9,8 @@ function el(id) {
 function init() {
     el("filepicker").onchange = filePicked;
     el("save").onclick = saveImage;
+    el("reset").onclick = doReset;
+    el("rotate").onclick = doRotate;
     el("t1").onclick = fnButtonClicked;
     el("t2").onclick = fnButtonClicked;
     canvas = new Canvas(el("canvas"));
@@ -14,6 +18,19 @@ function init() {
 
 function saveImage() {
     window.open(canvas.toDataURL(), "_blank");
+}
+
+function doReset() {
+    canvas.resize(resetImg.width, resetImg.height, false);
+    canvas.drawImage(resetImg);
+}
+
+function doRotate() {
+    canvas.toImage(function(img) {
+        canvas.clear();
+        canvas.resize(img.height, img.width, false);
+        canvas.drawRotatedImage(img, Math.PI / 2, 0, 0);
+    });
 }
 
 function fnButtonClicked(e) {
@@ -35,7 +52,8 @@ function filePicked() {
 }
 
 function imageLoaded(img) {
-    canvas.resize(img.width, img.height);
+    resetImg = img;
+    canvas.resize(img.width, img.height, false);
     canvas.drawImage(img, 0, 0);
 }
 
